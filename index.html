@@ -16,6 +16,24 @@
       text-align: center;
       font-family: 'Press Start 2P', cursive;
     }
+    #gameInfo {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      color: white;
+      font-size: 20px;
+      font-family: 'Press Start 2P', cursive;
+    }
+    #waveAnnouncement {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #f39c12;
+      text-shadow: 2px 2px #e74c3c;
+      font-size: 48px;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -26,6 +44,12 @@
     <button onclick="showTrophies()">Trophies</button>
     <button onclick="showOptions()">Options</button>
   </div>
+  <div id="gameInfo" style="display: none;">
+    <p id="scoreDisplay">Score: 0</p>
+    <p id="waveDisplay">Wave: 1</p>
+    <p id="enemyCountDisplay">Enemies Destroyed: 0</p>
+  </div>
+  <div id="waveAnnouncement">Wave 1</div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/Tween.min.js"></script>
   <script src="script.js"></script>
