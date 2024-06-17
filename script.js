@@ -1,4 +1,4 @@
-let scene, camera, renderer, player, boss, bullets = [], enemies = [], upgrades = [], explosions = [], controls;
+let scene, camera, renderer, player, boss, bullets = [], enemies = [], upgrades = [], explosions = [];
 let score = 0, wave = 1, enemyCount = 0, upgradesCount = 0;
 let bossHealth = 100, bossMaxHealth = 100, isGameOver = false, isPaused = false;
 let keys = {};
@@ -33,10 +33,18 @@ function init() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
+  const light = new THREE.DirectionalLight(0xffffff, 1);
+  light.position.set(5, 10, 7.5);
+  scene.add(light);
+
+  const ambientLight = new THREE.AmbientLight(0x404040);
+  scene.add(ambientLight);
+
   player = createPlayer();
   scene.add(player);
 
-  camera.position.z = 5;
+  camera.position.set(0, 5, 10);
+  camera.lookAt(player.position);
   window.addEventListener('resize', onWindowResize, false);
   document.addEventListener('keydown', onKeyDown, false);
   document.addEventListener('keyup', onKeyUp, false);
@@ -46,7 +54,7 @@ function init() {
 
 function createPlayer() {
   const geometry = new THREE.ConeGeometry(0.5, 1, 32);
-  const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+  const material = new THREE.MeshLambertMaterial({ color: 0xffffff });
   const player = new THREE.Mesh(geometry, material);
   player.position.y = -4;
   return player;
@@ -54,48 +62,50 @@ function createPlayer() {
 
 function createEnemy() {
   const geometry = new THREE.BoxGeometry();
-  const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+  const material = new THREE.MeshLambertMaterial({ color: 0xff0000 });
   const enemy = new THREE.Mesh(geometry, material);
   enemy.position.x = Math.random() * 10 - 5;
-  enemy.position.y = 5;
+  enemy.position.z = -20;
+  enemy.position.y = Math.random() * 10 - 5;
   enemies.push(enemy);
   scene.add(enemy);
 }
 
 function createBullet() {
   const geometry = new THREE.CylinderGeometry(0.05, 0.05, 1, 32);
-  const material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+  const material = new THREE.MeshLambertMaterial({ color: 0xffff00 });
   const bullet = new THREE.Mesh(geometry, material);
   bullet.rotation.x = Math.PI / 2;
-  bullet.position.set(player.position.x, player.position.y + 1, player.position.z);
+  bullet.position.set(player.position.x, player.position.y, player.position.z);
   bullets.push(bullet);
   scene.add(bullet);
 }
 
 function createBoss() {
   const geometry = new THREE.SphereGeometry(1, 32, 32);
-  const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+  const material = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
   boss = new THREE.Mesh(geometry, material);
-  boss.position.y = 5;
+  boss.position.z = -20;
   bossHealth = bossMaxHealth;
   scene.add(boss);
 }
 
 function createUpgrade() {
   const geometry = new THREE.SphereGeometry(0.2, 32, 32);
-  const material = new THREE.MeshBasicMaterial({ color: 0x0000ff });
+  const material = new THREE.MeshLambertMaterial({ color: 0x0000ff });
   const upgrade = new THREE.Mesh(geometry, material);
   upgrade.position.x = Math.random() * 10 - 5;
   upgrade.position.y = Math.random() * 10 - 5;
+  upgrade.position.z = -20;
   upgrades.push(upgrade);
   scene.add(upgrade);
 }
 
-function createExplosion(x, y) {
+function createExplosion(x, y, z) {
   const geometry = new THREE.SphereGeometry(0.5, 32, 32);
-  const material = new THREE.MeshBasicMaterial({ color: 0xffa500 });
+  const material = new THREE.MeshLambertMaterial({ color: 0xffa500 });
   const explosion = new THREE.Mesh(geometry, material);
-  explosion.position.set(x, y, 0);
+  explosion.position.set(x, y, z);
   explosions.push(explosion);
   scene.add(explosion);
 
@@ -122,13 +132,15 @@ function onKeyUp(event) {
 function handlePlayerMovement() {
   if (keys['ArrowLeft']) player.position.x -= 0.1;
   if (keys['ArrowRight']) player.position.x += 0.1;
+  if (keys['ArrowUp']) player.position.z -= 0.1;
+  if (keys['ArrowDown']) player.position.z += 0.1;
   if (keys[' ']) createBullet();
 }
 
 function handleBullets() {
   bullets.forEach((bullet, index) => {
-    bullet.position.y += 0.2;
-    if (bullet.position.y > 5) {
+    bullet.position.z -= 0.2;
+    if (bullet.position.z < -20) {
       scene.remove(bullet);
       bullets.splice(index, 1);
     }
@@ -137,8 +149,8 @@ function handleBullets() {
 
 function handleEnemies() {
   enemies.forEach((enemy, index) => {
-    enemy.position.y -= 0.02;
-    if (enemy.position.y < -5) {
+    enemy.position.z += 0.1;
+    if (enemy.position.z > 10) {
       scene.remove(enemy);
       enemies.splice(index, 1);
       enemyCount++;
@@ -149,16 +161,20 @@ function handleEnemies() {
 function handleBoss() {
   if (boss) {
     boss.position.x += 0.05 * (Math.random() > 0.5 ? 1 : -1);
+    boss.position.y += 0.05 * (Math.random() > 0.5 ? 1 : -1);
     if (boss.position.x > 5 || boss.position.x < -5) {
       boss.position.x *= -1;
+    }
+    if (boss.position.y > 5 || boss.position.y < -5) {
+      boss.position.y *= -1;
     }
   }
 }
 
 function handleUpgrades() {
   upgrades.forEach((upgrade, index) => {
-    upgrade.position.y -= 0.01;
-    if (upgrade.position.y < -5) {
+    upgrade.position.z += 0.05;
+    if (upgrade.position.z > 10) {
       scene.remove(upgrade);
       upgrades.splice(index, 1);
     }
@@ -220,5 +236,7 @@ function showTrophies() {
 function showOptions() {
   // Implement options display
 }
+
+window.addEventListener('resize', onWindowResize, false);
 
 window.addEventListener('resize', onWindowResize, false);
