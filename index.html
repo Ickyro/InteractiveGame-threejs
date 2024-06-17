@@ -1,25 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini Jeu de Plateforme 3D</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pogs Champ Invaders 3D</title>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    canvas { display: block; }
+    #uiControls {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      text-align: center;
+      font-family: 'Press Start 2P', cursive;
+    }
+  </style>
 </head>
 <body>
-    <h1>Mini Jeu de Plateforme 3D</h1>
-    <div id="menu">
-        <button onclick="startGame()">Commencer le Jeu</button>
-        <button onclick="showOptions()">Options</button>
-    </div>
-    <div id="options" style="display:none;">
-        <label for="gravity">Gravité:</label>
-        <input type="number" id="gravity" value="9.8">
-        <button onclick="applyOptions()">Appliquer</button>
-        <button onclick="hideOptions()">Retour</button>
-    </div>
-    <div id="game" style="display:none;"></div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="main.js"></script>
+  <div id="uiControls">
+    <h1>Pogs Champ Invaders 3D</h1>
+    <button onclick="startGame()">Start Game</button>
+    <button onclick="showHighScores()">High Scores</button>
+    <button onclick="showTrophies()">Trophies</button>
+    <button onclick="showOptions()">Options</button>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/Tween.min.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
