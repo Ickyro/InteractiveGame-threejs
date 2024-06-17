@@ -1,78 +1,19 @@
-let scene, camera, renderer, controls;
-let objects = [];
-let audioLoader, listener, sound;
-
-function init() {
-    // Initialisation de la scène, de la caméra et du renderer
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.getElementById('game').appendChild(renderer.domElement);
-
-    // Lumière
-    const light = new THREE.PointLight(0xffffff, 1, 100);
-    light.position.set(10, 10, 10);
-    scene.add(light);
-
-    // Formes complexes
-    const geometry1 = new THREE.TorusKnotGeometry(10, 3, 100, 16);
-    const material1 = new THREE.MeshStandardMaterial({ color: 0xff6347 });
-    const torusKnot = new THREE.Mesh(geometry1, material1);
-    scene.add(torusKnot);
-    objects.push(torusKnot);
-
-    const geometry2 = new THREE.DodecahedronGeometry(5);
-    const material2 = new THREE.MeshStandardMaterial({ color: 0x4682b4 });
-    const dodecahedron = new THREE.Mesh(geometry2, material2);
-    dodecahedron.position.set(20, 0, 0);
-    scene.add(dodecahedron);
-    objects.push(dodecahedron);
-
-    // Audio
-    listener = new THREE.AudioListener();
-    camera.add(listener);
-    sound = new THREE.Audio(listener);
-    audioLoader = new THREE.AudioLoader();
-
-    camera.position.z = 50;
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f0f0f0;
 }
 
-function animate() {
-    requestAnimationFrame(animate);
-    objects.forEach(obj => {
-        obj.rotation.x += 0.01;
-        obj.rotation.y += 0.01;
-    });
-    renderer.render(scene, camera);
+#game {
+    width: 100%;
+    height: 90vh;
 }
 
-function startGame() {
-    document.getElementById('menu').style.display = 'none';
-    document.getElementById('game').style.display = 'block';
-    init();
-    animate();
+#menu, #options {
+    margin: 20px;
 }
 
-function playMusic() {
-    const file = document.getElementById('musicUpload').files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            const audioData = e.target.result;
-            audioLoader.load(audioData, function (buffer) {
-                sound.setBuffer(buffer);
-                sound.setLoop(true);
-                sound.setVolume(0.5);
-                sound.play();
-            });
-        };
-        reader.readAsArrayBuffer(file);
-    }
+h1 {
+    margin-top: 20px;
 }
-
-window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-});
