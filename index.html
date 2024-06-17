@@ -3,11 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini Jeu Three.js</title>
+    <title>Mini Jeu Three.js - Formes Complexes</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Mini Jeu Three.js - Cube Rotatif</h1>
+    <h1>Mini Jeu Three.js - Formes Complexes</h1>
+    <div id="menu">
+        <button onclick="startGame()">Commencer le Jeu</button>
+        <input type="file" id="musicUpload" accept="audio/*">
+        <button onclick="playMusic()">Jouer la Musique</button>
+    </div>
     <div id="game"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="main.js"></script>
