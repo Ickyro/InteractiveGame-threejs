@@ -3,17 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini Jeu Three.js - Formes Complexes</title>
+    <title>Mini Jeu de Plateforme 3D</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Mini Jeu Three.js - Formes Complexes</h1>
+    <h1>Mini Jeu de Plateforme 3D</h1>
     <div id="menu">
         <button onclick="startGame()">Commencer le Jeu</button>
-        <input type="file" id="musicUpload" accept="audio/*">
-        <button onclick="playMusic()">Jouer la Musique</button>
+        <button onclick="showOptions()">Options</button>
     </div>
-    <div id="game"></div>
+    <div id="options" style="display:none;">
+        <label for="gravity">Gravité:</label>
+        <input type="number" id="gravity" value="9.8">
+        <button onclick="applyOptions()">Appliquer</button>
+        <button onclick="hideOptions()">Retour</button>
+    </div>
+    <div id="game" style="display:none;"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="main.js"></script>
 </body>
