@@ -1,37 +1,78 @@
-// Initialisation de la scène, de la caméra et du renderer
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.getElementById('game').appendChild(renderer.domElement);
+let scene, camera, renderer, controls;
+let objects = [];
+let audioLoader, listener, sound;
 
-// Création du cube
-const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
+function init() {
+    // Initialisation de la scène, de la caméra et du renderer
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.getElementById('game').appendChild(renderer.domElement);
 
-camera.position.z = 5;
+    // Lumière
+    const light = new THREE.PointLight(0xffffff, 1, 100);
+    light.position.set(10, 10, 10);
+    scene.add(light);
 
-// Ajout des contrôles de clavier
-document.addEventListener('keydown', onDocumentKeyDown, false);
-function onDocumentKeyDown(event) {
-    var keyCode = event.which;
-    if (keyCode == 37) {
-        cube.rotation.y -= 0.1;
-    } else if (keyCode == 38) {
-        cube.rotation.x -= 0.1;
-    } else if (keyCode == 39) {
-        cube.rotation.y += 0.1;
-    } else if (keyCode == 40) {
-        cube.rotation.x += 0.1;
-    }
-};
+    // Formes complexes
+    const geometry1 = new THREE.TorusKnotGeometry(10, 3, 100, 16);
+    const material1 = new THREE.MeshStandardMaterial({ color: 0xff6347 });
+    const torusKnot = new THREE.Mesh(geometry1, material1);
+    scene.add(torusKnot);
+    objects.push(torusKnot);
 
-// Fonction d'animation
+    const geometry2 = new THREE.DodecahedronGeometry(5);
+    const material2 = new THREE.MeshStandardMaterial({ color: 0x4682b4 });
+    const dodecahedron = new THREE.Mesh(geometry2, material2);
+    dodecahedron.position.set(20, 0, 0);
+    scene.add(dodecahedron);
+    objects.push(dodecahedron);
+
+    // Audio
+    listener = new THREE.AudioListener();
+    camera.add(listener);
+    sound = new THREE.Audio(listener);
+    audioLoader = new THREE.AudioLoader();
+
+    camera.position.z = 50;
+}
+
 function animate() {
     requestAnimationFrame(animate);
+    objects.forEach(obj => {
+        obj.rotation.x += 0.01;
+        obj.rotation.y += 0.01;
+    });
     renderer.render(scene, camera);
 }
 
-animate();
+function startGame() {
+    document.getElementById('menu').style.display = 'none';
+    document.getElementById('game').style.display = 'block';
+    init();
+    animate();
+}
+
+function playMusic() {
+    const file = document.getElementById('musicUpload').files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const audioData = e.target.result;
+            audioLoader.load(audioData, function (buffer) {
+                sound.setBuffer(buffer);
+                sound.setLoop(true);
+                sound.setVolume(0.5);
+                sound.play();
+            });
+        };
+        reader.readAsArrayBuffer(file);
+    }
+}
+
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
